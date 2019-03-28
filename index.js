@@ -26,7 +26,7 @@ io.on('connection', socket => {
     });
 
     if (!sender) {
-      return socket.emit('ERROR', 'You are a zombie...Reloading!');
+      return socket.emit('ERROR', 'You are zombie...Reloading!');
     }
 
     const message = {
