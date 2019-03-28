@@ -4,7 +4,6 @@ const http = require('http');
 const server = http.createServer();
 const io = socketIO(server);
 
-let removedUsers = [];
 let users = [];
 const messages = [];
 
@@ -27,17 +26,7 @@ io.on('connection', socket => {
     });
 
     if (!sender) {
-      sender = removedUsers.find(user => {
-        return user.id === socket.id;
-      });
-      if (sender) {
-        removedUsers = removedUsers.filter(user => user.id !== sender.id);
-        users.push(sender);
-        socket.broadcast.emit('NEW_USER', sender);
-      } else {
-        socket.emit('ERROR', 'You are a zombie');
-        return;
-      }
+      return socket.emit('ERROR', 'You are a zombie');
     }
 
     const message = {
@@ -58,7 +47,6 @@ io.on('connection', socket => {
     users = users.filter(user => user.id !== socket.id);
 
     if (userToRemove) {
-      removedUsers.push(userToRemove);
       io.emit('USER_DISCONNECTED', userToRemove);
     }
   });
