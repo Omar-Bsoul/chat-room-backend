@@ -1,10 +1,7 @@
 const socketIO = require('socket.io');
 const http = require('http');
 
-const server = http.createServer((req, res) => {
-  res.write('');
-  res.end();
-});
+const server = http.createServer();
 const io = socketIO(server);
 
 let users = [];
