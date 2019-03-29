@@ -1,10 +1,10 @@
-const socketIO = require('socket.io');
+//const socketIO = require('socket.io');
 const http = require('http');
 
 const server = http.createServer();
-const io = socketIO(server);
+//const io = socketIO(server);
 
-let users = [];
+/*let users = [];
 const messages = [];
 
 io.on('connection', socket => {
@@ -50,7 +50,7 @@ io.on('connection', socket => {
       io.emit('USER_DISCONNECTED', userToRemove);
     }
   });
-});
+});*/
 
 const PORT = process.env.PORT || 4000;
 server.listen(4000, () => console.log(`App is listening on PORT: ${PORT}`));
