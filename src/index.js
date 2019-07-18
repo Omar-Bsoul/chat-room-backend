@@ -1,11 +1,30 @@
 const socketIO = require('socket.io');
 const http = require('http');
+const express = require('express');
+const app = express();
 
-const server = http.createServer();
+app.use(express.static('public'));
+
+const server = http.Server(app);
 const io = socketIO(server);
 
 let users = [];
 const messages = [];
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
+const mongoose = require('mongoose');
+
+mongoose
+  .connect(process.env.DB_CONN_STR, { useNewUrlParser: true })
+  .then()
+  .catch(err => console.log(log));
+
+require('./models/Message');
+
+const Message = mongoose.model('messages');
 
 io.on('connection', socket => {
   socket.on('NEW_USER', fullname => {
@@ -20,7 +39,7 @@ io.on('connection', socket => {
     socket.emit('USER_ID', user);
   });
 
-  socket.on('NEW_MESSAGE', text => {
+  socket.on('NEW_MESSAGE', async text => {
     let sender = users.find(user => {
       return user.id === socket.id;
     });
@@ -36,6 +55,16 @@ io.on('connection', socket => {
       sender
     };
     messages.push(message);
+
+    const dbMsg = new Message({
+      sender: {
+        socket: sender.id,
+        name: sender.fullname
+      },
+      text
+    });
+    await dbMsg.save();
+
     socket.broadcast.emit('NEW_MESSAGE', message);
     socket.emit('MESSAGE_DETAILS', message);
   });
